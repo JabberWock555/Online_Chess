@@ -7,6 +7,7 @@ public class ChessBoard : MonoBehaviour
 {
 
     [Header("Prefabs && Materials")]
+
     [SerializeField] private GameObject whiteTile;
     [SerializeField] private GameObject blackTile;
 
@@ -37,25 +38,26 @@ public class ChessBoard : MonoBehaviour
         return;
     }
 
-    RaycastHit info;
-    Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
-    if(Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Tile"))){
+        Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit info, 200, LayerMask.GetMask("Tile", "Hover"))){
 
-        Vector2Int hitTileiIndex = LookUpIndex(info.transform.gameObject);
+        Vector2Int hitTileIndex = LookUpIndex(info.transform.gameObject);
 
         if(currentHover == -Vector2Int.one){
-            currentHover = hitTileiIndex;
-            tiles[hitTileiIndex.x,hitTileiIndex.y].layer = LayerMask.NameToLayer("Hover");
+            Debug.Log("Hover_0" + hitTileIndex);
+            currentHover = hitTileIndex;
+            tiles[hitTileIndex.x,hitTileIndex.y].layer = LayerMask.NameToLayer("Hover");
         }
-
-        if(currentHover != hitTileiIndex){
+        if(currentHover != hitTileIndex){
+            Debug.Log("Hover_1"+ hitTileIndex);
             tiles[currentHover.x,currentHover.y].layer = LayerMask.NameToLayer("Tile");
-            currentHover = hitTileiIndex;
-            tiles[hitTileiIndex.x,hitTileiIndex.y].layer = LayerMask.NameToLayer("Hover");
+            currentHover = hitTileIndex;
+            tiles[hitTileIndex.x,hitTileIndex.y].layer = LayerMask.NameToLayer("Hover");
         }
     }
     else{
         if(currentHover != -Vector2Int.one){
+            Debug.Log("Hover_2");
             tiles[currentHover.x,currentHover.y].layer = LayerMask.NameToLayer("Tile");
             currentHover = -Vector2Int.one;
         }
@@ -68,8 +70,8 @@ public class ChessBoard : MonoBehaviour
 
     bounds = new Vector3((tileCount_X/2) * tileSize, 0, (tileCount_Y/2) * tileSize) + boardCenter;
 
-
     tiles = new GameObject[tileCount_X,tileCount_Y];
+
     for(int x =0; x< tileCount_X; x++)
         for(int y=0; y < tileCount_Y; y++)
               tiles[x,y] = GenerateSingleTile(tileSize, x,y);
@@ -86,7 +88,7 @@ public class ChessBoard : MonoBehaviour
         tileObject.transform.position = new Vector3(x*tileSize, 0, y*tileSize) - bounds;
         
         tileObject.layer = LayerMask.NameToLayer("Tile");
-        tileObject.AddComponent<BoxCollider>(); 
+        //tileObject.AddComponent<BoxCollider>(); 
 
         return tileObject;
     }
@@ -98,7 +100,8 @@ public class ChessBoard : MonoBehaviour
                 if(tiles[x,y] == hitInfo)
                     return new Vector2Int(x,y);
         
-        return -Vector2Int.one;
+    
+       return -Vector2Int.one;
 
     }
 #endregion
