@@ -34,7 +34,7 @@ public class ChessPiece : MonoBehaviour {
     }
 
 
-    public List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCount_X, int tileCount_Y){
+    public virtual List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCount_X, int tileCount_Y){
         List<Vector2Int> moves = new()
         {
             new Vector2Int(3, 3),
@@ -42,7 +42,7 @@ public class ChessPiece : MonoBehaviour {
             new Vector2Int(4, 3),
             new Vector2Int(4, 4)
         };
-        
+
         return moves;
     }
     public virtual void SetPosition(Vector3 targetPos, bool force = false){

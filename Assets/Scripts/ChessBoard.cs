@@ -163,8 +163,8 @@ private void GenerateAllPieces(){
     chessPieces[6,0] = GenerateSinglePiece(ChessPieceType.KNIGHT, ChessTeam.WHITE);
     chessPieces[7,0] = GenerateSinglePiece(ChessPieceType.ROOK, ChessTeam.WHITE);
 
-    for(int i =0 ; i< TILE_COUNT_X; i++ )
-        chessPieces[i,1] = GenerateSinglePiece(ChessPieceType.PAWN, ChessTeam.WHITE);
+    // for(int i =0 ; i< TILE_COUNT_X; i++ )
+    //     chessPieces[i,1] = GenerateSinglePiece(ChessPieceType.PAWN, ChessTeam.WHITE);
 
 
     chessPieces[0,7] = GenerateSinglePiece(ChessPieceType.ROOK, ChessTeam.BLACK);
@@ -176,8 +176,8 @@ private void GenerateAllPieces(){
     chessPieces[6,7] = GenerateSinglePiece(ChessPieceType.KNIGHT, ChessTeam.BLACK);
     chessPieces[7,7] = GenerateSinglePiece(ChessPieceType.ROOK, ChessTeam.BLACK);
 
-    for(int i =0 ; i< TILE_COUNT_X; i++ )
-        chessPieces[i,6] = GenerateSinglePiece(ChessPieceType.PAWN, ChessTeam.BLACK);
+    // for(int i =0 ; i< TILE_COUNT_X; i++ )
+    //     chessPieces[i,6] = GenerateSinglePiece(ChessPieceType.PAWN, ChessTeam.BLACK);
 }
 
 private ChessPiece GenerateSinglePiece(ChessPieceType pieceType, ChessTeam team){
