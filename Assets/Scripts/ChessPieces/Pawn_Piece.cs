@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Pawn_Piece : ChessPiece {
 
-     public override List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCount_X, int tileCount_Y){
+    public override List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCount_X, int tileCount_Y){
        
         List<Vector2Int> moves = new();
 
@@ -30,5 +30,40 @@ public class Pawn_Piece : ChessPiece {
 
         return moves;
     }
-    
+
+    public override SpecialMoves GetSpecialMoves(ref ChessPiece[,] board, ref List<Vector2Int[]> moveList, ref List<Vector2Int> availableMoves)
+    {
+        int direction = (Team == ChessTeam.WHITE) ? 1 : -1;
+     
+        // -------------- Promotion
+        if( (Team == ChessTeam.WHITE && currnet_Y == 6) || (Team == ChessTeam.BLACK && currnet_Y == 1))
+            return SpecialMoves.PROMOTION;
+
+
+        // -------------- En Passant
+        if(moveList.Count > 0){
+
+            Vector2Int[] lastMove = moveList[moveList.Count - 1];
+            if(board[lastMove[1].x, lastMove[1].y].Type == ChessPieceType.PAWN){       // If The Last moved piece was PAWN
+                
+                if((Mathf.Abs(lastMove[0].y - lastMove[1].y )== 2)                     // If the last move was +2 in both direction
+                && (board[lastMove[1].x, lastMove[1].y].Team != Team)                  // If the last move was from another team
+                    && ( lastMove[1].y == currnet_Y)){                                 // If both the pawns are on same Y
+ 
+                   if( lastMove[1].x == currnet_X - 1){                                // Landed Left
+                        availableMoves.Add(new Vector2Int(currnet_X - 1, currnet_Y + direction));
+                        return SpecialMoves.ENPASSANT;
+                       }
+                    if( lastMove[1].x == currnet_X + 1){                               // Landed Right
+                        availableMoves.Add(new Vector2Int(currnet_X + 1, currnet_Y + direction));
+                        return SpecialMoves.ENPASSANT;
+                    }
+                }
+                
+            }    
+        }
+
+
+        return base.GetSpecialMoves(ref board, ref moveList, ref availableMoves);
+    }
 }
