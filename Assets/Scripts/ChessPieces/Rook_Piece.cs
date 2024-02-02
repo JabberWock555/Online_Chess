@@ -7,14 +7,13 @@ public class Rook_Piece : ChessPiece {
        
         List<Vector2Int> moves = new();
 
+
 // --------- Down
         for(int i = currnet_Y - 1; i >=0; i --){
 
             if(board[currnet_X, i] == null)
                 moves.Add(new Vector2Int(currnet_X,i));
-            
-            if(board[currnet_X, i] != null){
-
+            else{
                 if(board[currnet_X, i].Team != Team)
                     moves.Add(new Vector2Int(currnet_X,i));
                 
@@ -27,9 +26,7 @@ public class Rook_Piece : ChessPiece {
 
             if(board[currnet_X, i] == null)
                 moves.Add(new Vector2Int(currnet_X,i));
-            
-            if(board[currnet_X, i] != null){
-
+            else{
                 if(board[currnet_X, i].Team != Team)
                     moves.Add(new Vector2Int(currnet_X,i));
                 
@@ -42,9 +39,7 @@ public class Rook_Piece : ChessPiece {
 
             if(board[i, currnet_Y] == null)
                 moves.Add(new Vector2Int(i, currnet_Y));
-            
-            if(board[i, currnet_Y] != null){
-
+            else{
                 if(board[i, currnet_Y].Team != Team)
                     moves.Add(new Vector2Int(i, currnet_Y));
                 
@@ -58,15 +53,14 @@ public class Rook_Piece : ChessPiece {
 
             if(board[i, currnet_Y] == null)
                 moves.Add(new Vector2Int(i, currnet_Y));
-            
-            if(board[i, currnet_Y] != null){
-
+            else{
                 if(board[i, currnet_Y].Team != Team)
                     moves.Add(new Vector2Int(i, currnet_Y));
                 
                 break;
             }
         }
+
 
         return moves;
     }

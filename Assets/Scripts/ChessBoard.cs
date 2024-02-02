@@ -1,8 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ChessBoard : MonoBehaviour
 {
@@ -15,12 +13,21 @@ public class ChessBoard : MonoBehaviour
     [SerializeField] private ChessPiece[] piecePrefabs;
     [SerializeField] private Material[] teamMaterials;
 
+    [Header("UI")]
+    [SerializeField] private GameObject victoryScreen;
+    private Text winningTitle;
+
+    [Header("Variables")]
+    [SerializeField] private float y_Offset = 0, tileSize = 1, dragOffset = 1f ;
+    [SerializeField] private float deathSize = 0.5f,deathSpacing = 0.3f, death_yOffest = 0.7f;
+
     //Logic
     private const int TILE_COUNT_X = 8;
     private const int TILE_COUNT_Y = 8;
 
     private ChessPiece[,] chessPieces;
     private GameObject[,] tiles;
+    private List<Vector2Int[]> moves_List = new();
     private List<Vector2Int> availableMoves = new();
     private List<ChessPiece> deadWhites_List = new();
     private List<ChessPiece> deadBlacks_List = new();
@@ -28,15 +35,22 @@ public class ChessBoard : MonoBehaviour
     private Vector2Int currentHover;
     private ChessPiece currentPiece;
     private Vector3 bounds;
-    [SerializeField] private float y_Offset = 0, tileSize = 1, dragOffset = 1f ;
     private Vector3 boardCenter;
-    [SerializeField] private float deathSize = 0.5f,deathSpacing = 0.3f, death_yOffest = 0.7f;
+    private bool isWhiteTurn;
     
 
     private void Awake() {
-    GenerateTiles(tileSize,TILE_COUNT_X, TILE_COUNT_Y);
-    GenerateAllPieces();
-    PositionAllPieces();
+        
+        victoryScreen.SetActive(false);
+        winningTitle = victoryScreen.transform.GetChild(0).GetComponent<Text>();
+
+        isWhiteTurn = true;
+        
+        GenerateTiles(tileSize,TILE_COUNT_X, TILE_COUNT_Y);
+        GenerateAllPieces();
+        PositionAllPieces();
+
+        
    }
    
    private void Update() {   
@@ -64,7 +78,7 @@ public class ChessBoard : MonoBehaviour
 // ---------- On Mouse Down - Dragging
             if(Input.GetMouseButtonDown(0)){
                 if(chessPieces[hitTileIndex.x, hitTileIndex.y] != null){
-                    if(true){
+                    if((chessPieces[hitTileIndex.x, hitTileIndex.y].Team == ChessTeam.WHITE && isWhiteTurn) || (chessPieces[hitTileIndex.x, hitTileIndex.y].Team == ChessTeam.BLACK && !isWhiteTurn)){
                         currentPiece = chessPieces[hitTileIndex.x, hitTileIndex.y];
 
                         // Get a list for available Moves to Highlight
@@ -216,9 +230,7 @@ private void PositionAllPieces(){
         return new Vector3(x*tileSize, y_Offset, y*tileSize) - bounds ;
     }
 
-
-
-    #endregion
+#endregion
 
 #region  Highlighting -- ChessBoard
 
@@ -235,7 +247,7 @@ private void PositionAllPieces(){
     } 
 #endregion
 
-#region Operations -- ChessPiece
+#region  Operations -- ChessPiece
 
     private bool MoveTo(ChessPiece piece, Vector2Int previousPos, Vector2Int targetPos)
     {
@@ -249,10 +261,18 @@ private void PositionAllPieces(){
                 return false;
 
             if(otherPiece.Team == ChessTeam.WHITE){
+
+                if(otherPiece.Type == ChessPieceType.KING)
+                    CheckMate(ChessTeam.BLACK);
+
                 deadWhites_List.Add(otherPiece);
                 otherPiece.SetScale(deathSize);
                 otherPiece.SetPosition(new Vector3(7.75f *tileSize, death_yOffest, -1.3f*tileSize) - bounds + (Vector3.forward * deathSpacing) * deadWhites_List.Count);
             }else{
+
+                if(otherPiece.Type == ChessPieceType.KING)
+                    CheckMate(ChessTeam.WHITE);
+
                 deadBlacks_List.Add(otherPiece);
                 otherPiece.SetScale(deathSize);
                 otherPiece.SetPosition(new Vector3(-0.75f *tileSize, death_yOffest, 8.3f *tileSize) - bounds + (Vector3.back * deathSpacing) * deadBlacks_List.Count);
@@ -263,6 +283,9 @@ private void PositionAllPieces(){
         chessPieces[previousPos.x, previousPos.y] = null;
 
         PositionSinglePiece(targetPos.x, targetPos.y);
+        moves_List.Add(new Vector2Int[] { previousPos, targetPos});
+
+        isWhiteTurn = !isWhiteTurn;
 
         return true;
     }
@@ -274,6 +297,63 @@ private void PositionAllPieces(){
 
         return false;
     }
+
+    private void BoardCleanUp(){
+
+        currentPiece = null;
+        availableMoves.Clear();
+        moves_List.Clear();
+
+        for(int x = 0; x < TILE_COUNT_X; x++){
+            for(int y = 0; y < TILE_COUNT_Y; y++){
+                if(chessPieces[x,y] != null)
+                    Destroy(chessPieces[x,y].gameObject);
+
+                chessPieces[x,y] = null;
+            }
+        }
+
+        for(int i = 0; i < deadBlacks_List.Count; i++)
+            Destroy(deadBlacks_List[i].gameObject);
+        for(int i = 0; i < deadWhites_List.Count; i++)
+            Destroy(deadWhites_List[i].gameObject);
+
+        deadBlacks_List.Clear();
+        deadWhites_List.Clear();
+         
+        ResetBoard();
+    }
+
+    private void ResetBoard(){
+        GenerateAllPieces();
+        PositionAllPieces();
+        isWhiteTurn = true;
+    }
+
+#endregion
+
+#region  CheckMate
+
+    private void CheckMate(ChessTeam team){
+        DisplayVictory(team);
+    }
+
+    private void DisplayVictory(ChessTeam team){
+        victoryScreen.SetActive(true);
+        if(team == ChessTeam.WHITE)
+            winningTitle.text = "White Wins !";
+        else
+            winningTitle.text = "Black Wins !";
+    }
+
+    public void OnResetButton(){
+        victoryScreen.SetActive(false);
+
+        //---- CleanUp
+        BoardCleanUp();
+    }
+
+    public void OnExitButton(){ Application.Quit();}
 
 #endregion
 

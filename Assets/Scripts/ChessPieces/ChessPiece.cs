@@ -1,21 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ChessPieceType{
-    NONE,
-    PAWN,
-    ROOK,
-    KNIGHT,
-    BISHOP,
-    QUEEN,
-    KING
-}
-
-public enum ChessTeam{
-    WHITE,
-    BLACK
-}
-
 public class ChessPiece : MonoBehaviour {
     
     public ChessTeam Team;
@@ -27,6 +12,11 @@ public class ChessPiece : MonoBehaviour {
     private  Vector3 targetPosition;
     private Vector3 desiredScale = Vector3.one;
 
+    void Start()
+    {
+        transform.rotation = Quaternion.Euler((Team == ChessTeam.WHITE) ? new Vector3(0,-90,0) : new Vector3(0,90,0) );        
+    }
+
     private void Update(){
 
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime*10f);
@@ -35,15 +25,7 @@ public class ChessPiece : MonoBehaviour {
 
 
     public virtual List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCount_X, int tileCount_Y){
-        List<Vector2Int> moves = new()
-        {
-            new Vector2Int(3, 3),
-            new Vector2Int(3, 4),
-            new Vector2Int(4, 3),
-            new Vector2Int(4, 4)
-        };
-
-        return moves;
+        return null;
     }
     public virtual void SetPosition(Vector3 targetPos, bool force = false){
         targetPosition = targetPos;
