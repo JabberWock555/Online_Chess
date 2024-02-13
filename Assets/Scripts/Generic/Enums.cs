@@ -9,6 +9,7 @@ public enum ChessPieceType{
 }
 
 public enum ChessTeam{
+    NONE,
     WHITE,
     BLACK
 }
@@ -18,4 +19,10 @@ public enum SpecialMoves{
     ENPASSANT,
     CASTLING,
     PROMOTION
+}
+
+public enum GameState{
+    
+    PLAY, 
+    PAUSE
 }
