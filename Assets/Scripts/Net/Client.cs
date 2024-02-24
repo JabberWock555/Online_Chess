@@ -97,7 +97,7 @@ public class Client : MonoSingleton < Client>
 
     // ---- Client Specific
 
-    private void SendToServer(NetMessage msg)
+    public void SendToServer(NetMessage msg)
     {
         DataStreamWriter writer;
         driver.BeginSend(connection, out writer );

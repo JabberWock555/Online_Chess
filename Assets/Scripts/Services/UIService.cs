@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class UIService : MonoSingleton < UIService >
 {
+    private int inGameMenuID;
+    private int onlineMenuID;
+    private int hostMenuID;
+    private int startMenuID;
+
     [SerializeField] private GameObject[] cameraAngles; 
     [SerializeField] private InputField addressInput;
     [SerializeField] private Server server;
@@ -14,8 +19,17 @@ public class UIService : MonoSingleton < UIService >
     public Action<bool> SetLocalGame;
 
     private void Start() {
+        AssignAnimations();
         animator = GetComponent<Animator>();
         RegisterToEvent();
+    }
+
+    private void AssignAnimations()
+    {
+        inGameMenuID = Animator.StringToHash("InGameMenu");
+        onlineMenuID = Animator.StringToHash("OnlineMenu");
+        hostMenuID = Animator.StringToHash("HostMenu");
+        startMenuID = Animator.StringToHash("StartMenu");
     }
 
     private void RegisterToEvent(){
@@ -28,7 +42,7 @@ public class UIService : MonoSingleton < UIService >
 
     private void OnStartGame_Client(NetMessage message)
     {
-        animator.SetTrigger("InGameMenu");
+        animator.SetTrigger(inGameMenuID);
     }
 
     public void ChangeCamera(ChessTeam index)
@@ -44,13 +58,13 @@ public class UIService : MonoSingleton < UIService >
         server.Init(8007);
         client.Init("127.0.0.1", 8007); 
         SetLocalGame?.Invoke(true);
-        animator.SetTrigger("InGameMenu"); 
+        animator.SetTrigger(inGameMenuID); 
     }
 
     public void OnOnlineGameButton() 
     {
         SetLocalGame?.Invoke(false);
-        animator.SetTrigger("OnlineMenu"); 
+        animator.SetTrigger(onlineMenuID); 
     }
 
     public void OnOnlineHostButton() 
@@ -58,7 +72,7 @@ public class UIService : MonoSingleton < UIService >
         server.Init(8007);
         client.Init("127.0.0.1", 8007);
 
-        animator.SetTrigger("HostMenu"); 
+        animator.SetTrigger(hostMenuID); 
     }
 
     public void OnOnlineConnectButton() 
@@ -66,13 +80,20 @@ public class UIService : MonoSingleton < UIService >
         client.Init(addressInput.text, 8007);
     }
 
-    public void OnOnlineBackButton() {  animator.SetTrigger("StartMenu"); }
+    public void OnOnlineBackButton() {  animator.SetTrigger(startMenuID); }
 
     public void OnHostBackButton() 
     {
         server.ShutDown();
         client.ShutDown();  
-        animator.SetTrigger("OnlineMenu"); 
+        animator.SetTrigger(onlineMenuID); 
+    }
+
+    public void OnLeaveFromGameButton()
+    {
+        ChangeCamera(ChessTeam.NONE);
+        animator.SetTrigger(startMenuID);
+
     }
 
     private void OnDestroy() {
