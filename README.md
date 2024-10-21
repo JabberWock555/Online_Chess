@@ -4,6 +4,9 @@ Here’s a detailed `README.md` for a multiplayer online and local 3D chess game
 
 # 3D Chess Game
 
+![DALL·E 2024-10-21 22 06 09 - A striking thumbnail for a 3D chess game  The image should feature a 3D chessboard with realistic black and white chess pieces, mid-game, highlighting](https://github.com/user-attachments/assets/4f7b971c-e845-46f9-9188-605820ad5f63)
+
+
 **3D Chess** is a multiplayer chess game made in Unity that supports both **local** and **online** play. Enjoy immersive 3D visuals and dynamic gameplay with friends or opponents from around the world. This project uses Unity's built-in features for game logic, and networking is implemented using the Unity Multiplayer framework.
 
 ## Table of Contents
